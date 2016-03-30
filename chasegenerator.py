@@ -13,7 +13,7 @@ class Chasepattern(Iterator):
 
     i = 0
     numleds = None
-    basecolor = chroma.Color('#5762FF')
+    basecolor = chroma.Color('#0E1024')
     chasecolor = chroma.Color('#FF8FFF')
     forever = False
     

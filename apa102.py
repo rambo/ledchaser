@@ -10,7 +10,7 @@ def colors2frame(colors):
     # Leds
     for color in colors:
         frame.append(0xff)  # we do not want to use global dimming
-        rgbbytes = rgb_floats2bytes(*color.rgb)
+        rgbbytes = color.rgb256
         frame.append(rgbbytes[2])
         frame.append(rgbbytes[1])
         frame.append(rgbbytes[0])

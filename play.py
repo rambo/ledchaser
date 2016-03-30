@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import zmq
+import chroma
 import sys,os,time
 
 from chasegenerator import Chasepattern
 from apa102 import colors2frame
+
+DEBUG=False
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
@@ -28,8 +31,19 @@ if __name__ == '__main__':
         delay = float(sys.argv[5])
 
     for colordata in pattern:
-        print("%f sending: %s" % (time.time(), repr(colordata)))
+        tstart = time.time()
+        if DEBUG:
+            print("%f: sending: %s" % (tstart, repr(colordata)))
         socket.send(colors2frame(colordata))
         # We must read the reply even though it's empty
         rpl = socket.recv()
-        time.sleep(delay)
+        adelay = (tstart+delay) - time.time()
+        if adelay > 0:
+            time.sleep(adelay)
+        else:
+            if DEBUG:
+                print("%f: Missed deadline!" % time.time())
+
+    socket.send(colors2frame([chroma.Color("#000000")]*pattern.numleds))
+    # We must read the reply even though it's empty
+    rpl = socket.recv()
