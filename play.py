@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-from future.builtins import next, object
+import zmq
 import sys,os,time
 
-from .chasegenerator import Chasepattern
-from .apa102 import colors2frame
+from chasegenerator import Chasepattern
+from apa102 import colors2frame
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print "usage ./play.py tcp://whatever:6969 numleds [basecolor] [chasecolor] [delay_in_seconds]"
+        print("usage ./play.py tcp://whatever:6969 numleds [basecolor] [chasecolor] [delay_in_seconds]")
         sys.exit(1)
     
     pattern = Chasepattern(int(sys.argv[2]))
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     if len(sys.argv) >= 5:
         pattern.chasecolor = chroma.Color(sys.argv[4])
     
-    delay = 0.25
+    delay = 0.1
     if len(sys.argv) >= 6:
         delay = float(sys.argv[5])
 

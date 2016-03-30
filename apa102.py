@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import math
+from utils import rgb_floats2bytes
 
-def rgb2frame(RGBData):
-    """The RGBData param is array of arrays with R G and B elements in that order"""
+def colors2frame(colors):
+    """The colors param is array chroma.Color objects"""
     # start frame
     frame = bytearray([0x0, 0x0, 0x0, 0x0])
     # Leds
-    for ledcolors in RGBData:
+    for color in colors:
         frame.append(0xff)  # we do not want to use global dimming
-        frame.append(ledcolors[2])
-        frame.append(ledcolors[1])
-        frame.append(ledcolors[0])
+        rgbbytes = rgb_floats2bytes(*color.rgb)
+        frame.append(rgbbytes[2])
+        frame.append(rgbbytes[1])
+        frame.append(rgbbytes[0])
     # End frame
-    eofbits = len(RGBData) / 2.0
+    eofbits = len(colors) / 2.0
     eof = bytearray([0xff] * int(math.ceil(eofbits/8.0)))
     return frame + eof
