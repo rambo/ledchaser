@@ -30,19 +30,22 @@ if __name__ == '__main__':
     if len(sys.argv) >= 6:
         delay = float(sys.argv[5])
 
-    for colordata in pattern:
-        tstart = time.time()
-        if DEBUG:
-            print("%f: sending: %s" % (tstart, repr(colordata)))
-        socket.send(colors2frame(colordata))
-        # We must read the reply even though it's empty
-        rpl = socket.recv()
-        adelay = (tstart+delay) - time.time()
-        if adelay > 0:
-            time.sleep(adelay)
-        else:
+    try:
+        for colordata in pattern:
+            tstart = time.time()
             if DEBUG:
-                print("%f: Missed deadline!" % time.time())
+                print("%f: sending: %s" % (tstart, repr(colordata)))
+            socket.send(colors2frame(colordata))
+            # We must read the reply even though it's empty
+            rpl = socket.recv()
+            adelay = (tstart+delay) - time.time()
+            if adelay > 0:
+                time.sleep(adelay)
+            else:
+                if DEBUG:
+                    print("%f: Missed deadline!" % time.time())
+    except KeyboardInterrupt:
+        pass
 
     socket.send(colors2frame([chroma.Color("#000000")]*pattern.numleds))
     # We must read the reply even though it's empty
