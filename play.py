@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import zmq
-import chroma
-import sys,os,time
 
+import os
+import sys
+import time
+
+import zmq
 from chasegenerator import Chasepattern
 
-DEBUG=False
+import chroma
+
+DEBUG = False
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
@@ -15,7 +19,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     DEBUG = bool(int(os.environ.get('DEBUG', '0')))
-    
+
     pattern = Chasepattern(int(sys.argv[2]))
     pattern.forever = True
     context = zmq.Context()
@@ -27,7 +31,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) >= 5:
         pattern.chasecolor = chroma.Color(sys.argv[4])
-    
+
     delay = 0.005
     if len(sys.argv) >= 6:
         delay = float(sys.argv[5])
@@ -40,7 +44,7 @@ if __name__ == '__main__':
                 # We must read the reply even though it's empty
                 socket.recv()
                 doread = False
-            adelay = (tstart+delay) - time.time()
+            adelay = (tstart + delay) - time.time()
             try:
                 frame = pattern.__next__()
                 ba = bytearray(frame)
@@ -58,7 +62,7 @@ if __name__ == '__main__':
             doread = True
     except KeyboardInterrupt:
         pass
-    
+
     pattern.basecolor = chroma.Color("#000000")
     pattern.chasecolor = chroma.Color("#000000")
     pattern.i = 0
