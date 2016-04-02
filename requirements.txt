@@ -1,5 +1,4 @@
 future==0.15.2
 pyzmq==14.4.0
 numpy==1.8.2
-Chroma==0.2.0
-
+git+git://github.com/rambo/Chroma#egg=Chroma==0.2.0-RAMBO
