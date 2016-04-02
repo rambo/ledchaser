@@ -31,12 +31,13 @@ if __name__ == '__main__':
         delay = float(sys.argv[5])
 
     try:
-        sent = False
+        doread = False
         while True:
             tstart = time.time()
-            if sent:
+            if doread:
                 # We must read the reply even though it's empty
                 socket.recv()
+                doread = False
             adelay = (tstart+delay) - time.time()
             try:
                 frame = pattern.__next__()
@@ -52,7 +53,7 @@ if __name__ == '__main__':
                 #print("%f: pattern: %s" % (tstart, repr(pattern.pattern)))
                 print("%f: sending: %s" % (tstart, repr(ba)))
             socket.send(ba)
-            sent = True
+            doread = True
     except KeyboardInterrupt:
         pass
     
@@ -60,6 +61,9 @@ if __name__ == '__main__':
     pattern.chasecolor = chroma.Color("#000000")
     pattern.i = 0
     frame = pattern.__next__()
+    if doread:
+        socket.recv()
+        doread = False
     socket.send(bytearray(frame))
     # We must read the reply even though it's empty
     socket.recv()
