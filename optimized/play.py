@@ -7,12 +7,14 @@ import sys,os,time
 
 from chasegenerator import Chasepattern
 
-DEBUG=True
+DEBUG=False
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("usage ./play.py tcp://whatever:6969 numleds [basecolor] [chasecolor] [delay_in_seconds]")
         sys.exit(1)
+
+    DEBUG = bool(int(os.environ.get('DEBUG', '0')))
     
     pattern = Chasepattern(int(sys.argv[2]))
     pattern.forever = True

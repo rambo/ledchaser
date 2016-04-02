@@ -15,6 +15,8 @@ if __name__ == '__main__':
         print("usage ./play.py tcp://whatever:6969 numleds [basecolor] [chasecolor] [delay_in_seconds]")
         sys.exit(1)
     
+    DEBUG = bool(int(os.environ.get('DEBUG', '0')))
+
     pattern = Chasepattern(int(sys.argv[2]))
     pattern.forever = True
     context = zmq.Context()
