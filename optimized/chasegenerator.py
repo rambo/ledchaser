@@ -18,7 +18,7 @@ class Chasepattern(Iterator):
     _numleds = None
     _basecolor = chroma.Color('#000000')
     _chasecolor = chroma.Color('#000000')
-    _tailsize = 0
+    _tailsize = 5
     forever = False
     pattern = None
     chasepattern = None
@@ -61,9 +61,15 @@ class Chasepattern(Iterator):
 
     def recalculate_chase_mix(self):
         self.chasepattern = np.zeros([1+self._tailsize,4], np.uint8)
+        # TODO: Gamma-correct ??
         rgbbytes = self._chasecolor.rgb256
         self.chasepattern[-1] = [ 0xff, rgbbytes[2], rgbbytes[1], rgbbytes[0] ]
-        # TODO: implement the tail blending
+        for x in range(self._tailsize):
+            tailcolor = chroma.Color(self._chasecolor)
+            tailcolor.alpha = 1.0/self._tailsize * x
+            blended = self._basecolor + tailcolor
+            rgbbytes = blended.rgb256
+            self.chasepattern[x] = [ 0xff, rgbbytes[2], rgbbytes[1], rgbbytes[0] ]
 
     @property
     def numleds(self):
@@ -86,11 +92,16 @@ class Chasepattern(Iterator):
 
     def __next__(self):
         chasepos = self.i % (self._numleds-1)
-        prevpos = chasepos - 1
+        tailend = chasepos - len(self.chasepattern)
+        # TODO: Gamma-correct ??
         rgbbytes = self._basecolor.rgb256
-        self.pattern[prevpos] = [ 0xff, rgbbytes[2], rgbbytes[1], rgbbytes[0] ]
-        # TODO: this needs to be vectorized when we implement the tail
-        self.pattern[chasepos] = self.chasepattern[-1]
+        self.pattern[tailend-1] = [ 0xff, rgbbytes[2], rgbbytes[1], rgbbytes[0] ]
+        if tailend < 0:
+            self.pattern[tailend:] = self.chasepattern[0:abs(tailend)]
+            self.pattern[0:chasepos] = self.chasepattern[abs(tailend):]
+        else:
+            self.pattern[tailend:chasepos] = self.chasepattern
+
         self.frame[APA102_FRAME_START_SIZE:self.pattern.size+APA102_FRAME_START_SIZE] = self.pattern.flatten()
 
         self.i += 1
