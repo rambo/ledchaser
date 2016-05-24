@@ -27,6 +27,7 @@ class Chasepattern(Iterator):
     pattern = None
     chasepattern = None
     frame = None
+    reverse = False
 
     def __init__(self, numleds):
         self.numleds = numleds
@@ -106,7 +107,10 @@ class Chasepattern(Iterator):
         else:
             self.pattern[tailend:chasepos] = self.chasepattern
 
-        self.frame[APA102_FRAME_START_SIZE:self.pattern.size + APA102_FRAME_START_SIZE] = self.pattern.flatten()
+        if self.reverse:
+            self.frame[APA102_FRAME_START_SIZE:self.pattern.size + APA102_FRAME_START_SIZE] = np.flipud(self.pattern).flatten()
+        else:
+            self.frame[APA102_FRAME_START_SIZE:self.pattern.size + APA102_FRAME_START_SIZE] = self.pattern.flatten()
 
         self.i += 1
         if self.i > self.numleds and not self.forever:

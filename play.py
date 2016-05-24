@@ -22,6 +22,7 @@ if __name__ == '__main__':
 
     pattern = Chasepattern(int(sys.argv[2]))
     pattern.forever = True
+    pattern.reverse = True
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     socket.connect(sys.argv[1])
