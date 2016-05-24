@@ -40,6 +40,15 @@ if __name__ == '__main__':
         doread = False
         while True:
             tstart = time.time()
+            if pattern.i % 5 == 0:
+                hsv = list(pattern.basecolor.hsv)
+                hsv[0] = (hsv[0] + 1) % 360
+                pattern.basecolor.hsv = hsv
+                pattern.basecolor = pattern.basecolor
+                hsv = list(pattern.chasecolor.hsv)
+                hsv[0] = (hsv[0] + 1) % 360
+                pattern.chasecolor.hsv = hsv
+                pattern.chasecolor = pattern.chasecolor
             if doread:
                 # We must read the reply even though it's empty
                 socket.recv()
