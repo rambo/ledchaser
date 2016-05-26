@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import division, print_function
 
 import os
 import sys
 import time
 
+import chroma
 import zmq
 from chasegenerator import Chasepattern
-
-import chroma
 
 DEBUG = False
 

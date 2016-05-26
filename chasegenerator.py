@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import division, print_function
 
 import math
 
-import numpy as np
-
 import chroma
+import numpy as np
 
 try:
     from collections.abc import Iterator
