@@ -14,7 +14,7 @@ DEBUG = False
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        print("usage ./play.py tcp://whatever:6969 numleds [basecolor] [chasecolor] [delay_in_seconds]")
+        print("usage ./play.py tcp://whatever:6969 numleds [tails] [basecolor] [chasecolor] [delay_in_seconds]")
         sys.exit(1)
 
     DEBUG = bool(int(os.environ.get('DEBUG', '0')))
@@ -27,14 +27,17 @@ if __name__ == '__main__':
     socket.connect(sys.argv[1])
 
     if len(sys.argv) >= 4:
-        pattern.basecolor = chroma.Color(sys.argv[3])
+        pattern.numtails = int(sys.argv[3])
 
     if len(sys.argv) >= 5:
-        pattern.chasecolor = chroma.Color(sys.argv[4])
+        pattern.basecolor = chroma.Color(sys.argv[4])
+
+    if len(sys.argv) >= 6:
+        pattern.chasecolor = chroma.Color(sys.argv[5])
 
     delay = 0.005
-    if len(sys.argv) >= 6:
-        delay = float(sys.argv[5])
+    if len(sys.argv) >= 7:
+        delay = float(sys.argv[6])
 
     try:
         doread = False
