@@ -22,6 +22,8 @@ class Chasepattern(Iterator):
     _basecolor = chroma.Color('#000000')
     _chasecolor = chroma.Color('#000000')
     _tailsize = 5
+    _tailinterval = 0
+    _numtails = 1
     forever = False
     pattern = None
     chasepattern = None
@@ -32,6 +34,7 @@ class Chasepattern(Iterator):
         self.numleds = numleds
         self.basecolor = chroma.Color('#0E1024')
         self.chasecolor = chroma.Color('#FF8FFF')
+        self._tailinterval = self._numleds / self._numtails
 
     @property
     def basecolor(self):
@@ -62,6 +65,17 @@ class Chasepattern(Iterator):
     def tailsize(self, value):
         self._tailsize = value
         self.recalculate_chase_mix()
+
+    @property
+    def numtails(self):
+        return self._numtails
+
+    @numtails.setter
+    def numtails(self, value):
+        self._numtails = value
+        # Trigger base refill
+        self.basecolor = self.basecolor
+        self._tailinterval = self._numleds / self._numtails
 
     def recalculate_chase_mix(self):
         self.chasepattern = np.zeros([1 + self._tailsize, 4], np.uint8)
@@ -94,8 +108,10 @@ class Chasepattern(Iterator):
     def next(self):
         return self.__next__()
 
-    def __next__(self):
-        chasepos = self.i % (self._numleds - 1)
+    def _position_single_tail(self, chasepos):
+        # TODO make this case work too.
+        if chasepos < 0:
+            return
         tailend = chasepos - len(self.chasepattern)
         # TODO: Gamma-correct ??
         rgbbytes = self._basecolor.rgb256
@@ -105,6 +121,11 @@ class Chasepattern(Iterator):
             self.pattern[0:chasepos] = self.chasepattern[abs(tailend):]
         else:
             self.pattern[tailend:chasepos] = self.chasepattern
+
+    def __next__(self):
+        chasepos = self.i % (self._numleds - 1)
+        for x in range(self._numtails):
+            self._position_single_tail(chasepos - x*self._tailinterval)
 
         if self.reverse:
             self.frame[APA102_FRAME_START_SIZE:self.pattern.size + APA102_FRAME_START_SIZE] = np.flipud(self.pattern).flatten()
