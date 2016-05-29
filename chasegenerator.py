@@ -125,7 +125,7 @@ class Chasepattern(Iterator):
     def __next__(self):
         chasepos = self.i % (self._numleds - 1)
         for x in range(self._numtails):
-            self._position_single_tail(chasepos - x*self._tailinterval)
+            self._position_single_tail((chasepos + x*self._tailinterval) % (self._numleds - 1))
 
         if self.reverse:
             self.frame[APA102_FRAME_START_SIZE:self.pattern.size + APA102_FRAME_START_SIZE] = np.flipud(self.pattern).flatten()
